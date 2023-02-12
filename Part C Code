@@ -74,8 +74,8 @@ int main(void)
 {
 	Initialize();
 	while (1){
-	sprintf(String, "%d", space_count);
-	UART_putstring(String);
+	//sprintf(String, "%d", space_count);
+	//UART_putstring(String);
 	_delay_ms(1000);
 
 	if (should_print == 1){
