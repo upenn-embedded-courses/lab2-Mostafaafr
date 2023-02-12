@@ -1,0 +1,108 @@
+/*
+ * ESE 350 Lab 2.c
+ *
+ * Created: 1/27/2023 2:31:43 PM
+ * Author : mosta
+ */ 
+
+#define F_CPU 16000000UL
+#include <stdlib.h>
+#include <stdio.h>
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#define BAUD_RATE 9600
+#define BAUD_PRESCALER (((F_CPU / (BAUD_RATE * 16UL))) - 1)
+#include "uart.h"
+
+
+volatile unsigned int count = 0;
+char String[25]; 
+volatile int button_pressed = 1;
+volatile unsigned int should_print = 0;
+volatile unsigned int space_count = 0;
+void Initialize()
+{
+	cli();
+
+	DDRB &= ~(1<<DDB0); //setting input pin
+	//DDRB |= (1<<DDB5); // set PB5 to be output
+	
+	TCCR1B |= (1<<ICES1); // Looking for rising edge
+	TIFR1 |= (1<<ICF1); //necessary stuff
+	TIMSK1 |= (1<<ICIE1); //Enables input capture on timer 1
+	
+	TCCR1A = 0x00;
+	TCCR1B = 0x00;
+	
+	TCCR1B = (1<<CS10);
+	
+	TCCR1A &= ~(1 << WGM10); //start timer 1
+	TCCR1A &= ~(1 << WGM11); //start timer 1
+	TCCR1B &= ~(1 << WGM12); //start timer 1
+	TCCR1B &= ~(1 << WGM13); //start timer 1
+	
+	TIMSK1 |= (1<<TOIE1); // Enable our overflow interrupt
+	TIFR1 |= (1<<TOV1);
+	
+	UART_init(BAUD_PRESCALER);
+	sei();
+}
+ISR(TIMER1_CAPT_vect)
+	{
+		button_pressed ^= 1;
+		//if (button_pressed == 1){
+			//
+		TCCR1B ^= (1<<ICES1);
+		
+}
+
+ISR(TIMER1_OVF_vect)
+{
+	if (button_pressed == 1){
+	count += 1;
+	}
+	if ((PINB & (1 << PINB0)) == 0){
+		//button_pressed = 0;
+		space_count += 1;
+		should_print = 1;
+	}
+}
+
+
+int main(void)
+{
+	Initialize();
+	while (1){
+	sprintf(String, "%d", space_count);
+	UART_putstring(String);
+	_delay_ms(1000);
+
+	if (should_print == 1){
+		//_delay_ms(10);
+		if (count > 7 && count < 49){
+		sprintf(String, "dot");
+		UART_putstring(String);
+		should_print = 0;
+		count = 0;}
+		
+		else if (count > 49 && count < 98){
+		sprintf(String, "dash");
+		UART_putstring(String);
+		should_print = 0;
+		count = 0;}
+		
+		else if (count > 98){
+		//sprintf(String, " ");
+		//UART_putstring(String);
+		should_print = 0; 
+		count = 0;}
+
+	}
+	if (space_count > 98 && should_print == 1){
+		sprintf(String, " ");
+		UART_putstring(String);}
+		space_count = 0;
+	}
+	
+	}
