@@ -178,7 +178,6 @@ void Initialize()
 	DDRB &= ~(1<<DDB0); //setting input pin
 	DDRB |= (1 << DDB2); // Set yellow LED as output for dashes
 	DDRB |= (1 << DDB3); // Blue LED as output for dots
-	//DDRB |= (1<<DDB5); // set PB5 to be output
 	
 	TCCR1B |= (1<<ICES1); // Looking for rising edge
 	TIFR1 |= (1<<ICF1); // necessary stuff
