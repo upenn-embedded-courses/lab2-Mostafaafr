@@ -229,7 +229,7 @@ int main(void)
 	while (1){
 	sprintf(String, "%d", space_count);
 	UART_putstring(String);
-	_delay_ms(1000);
+	_delay_ms(800);
 
 	if (should_print == 1){
 		//_delay_ms(10);
