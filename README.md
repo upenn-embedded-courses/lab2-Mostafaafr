@@ -1,5 +1,5 @@
-<h1> eBayChecker</h1>
-<p> A Python script that notifies you by email when items are listed </p>
+<h1> Morse Code Reader</h1>
+<p> Press a button connected to an Arduino with Morse Code and output letters </p>
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
