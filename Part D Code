@@ -24,8 +24,7 @@ volatile int button_pressed = 1;
 volatile unsigned int should_print = 0;
 volatile unsigned int space_count = 0;
 
-void printChar(int morse[]){
-   // Return a char from Morse code sequence
+void print_char(int morse[]){
    if (morse[0] == 0 && morse[1] == 1 && morse[2] == 2 && morse [3] == 2 && morse [4] == 2){
        sprintf(morse_code,"A\n");
        UART_putstring(morse_code);
@@ -196,7 +195,7 @@ void Initialize()
 	TCCR1B &= ~(1 << WGM13); //start timer 1
 	
 	TIMSK1 |= (1<<TOIE1); // Enable our overflow interrupt
-	TIFR1 |= (1<<TOV1);
+	TIFR1 |= (1<<TOV1); // Enabling overflow interrupt
 	
 	UART_init(BAUD_PRESCALER);
 	sei();
@@ -265,7 +264,7 @@ int main(void)
 	if (space_count > 98 && should_print == 1){
 		//sprintf(String, " ");
 		//UART_putstring(String);
-		printChar(morse);
+		print_char(morse);
 		morse[0] = 2;
 		morse[1] = 2;
 		morse[2] = 2;
